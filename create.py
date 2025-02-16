@@ -1,8 +1,9 @@
-import json
-import subprocess
 import os
 import sys
+import json
+import subprocess
 import re
+import glob
 
 input_file = "input.html"
 cover_file = "cover_image.jpg"
@@ -37,5 +38,5 @@ def create_epub():
     else:
         print("Conversion failed.")
 
-if __name__ == "__main__":
-    create_epub()
+create_epub()
+

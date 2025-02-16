@@ -1,4 +1,6 @@
 {
     "title": "Test Book",
-    "author": "Unknown Author"
+    "author": "Unknown Author",
+    "language": "en",
+    "identifier": "0000000000000"
 }
