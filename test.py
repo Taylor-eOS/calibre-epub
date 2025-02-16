@@ -12,6 +12,7 @@ html_content = """<!DOCTYPE html>
 <body>
     <h1>Chapter 1</h1>
     <p>This is text in the first chapter.<sup>1</sup></p>
+    <blockquote>This is a quote.</blockquote>
     <p>More text in the first chapter.<br>In two sentences.</p>
     <p>This is text in separate p tags:</p>
     <p>In EPUB formatting, line-height refers to the amount of vertical space between lines of text.</p>
