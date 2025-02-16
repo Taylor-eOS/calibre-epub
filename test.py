@@ -9,10 +9,10 @@ html_content = """<!DOCTYPE html>
 <head>
     <title>Example Test Book</title>
 </head>
-<p>
+<body>
     <h1>Chapter 1</h1>
     <p>This is text in the first chapter.<sup>1</sup></p>
-    <p>This is text in the first chapter.<br>In two sentences.</p>
+    <p>More text in the first chapter.<br>In two sentences.</p>
     <p>This is text in separate p tags:</p>
     <p>In EPUB formatting, line-height refers to the amount of vertical space between lines of text.</p>
     <p>It plays an essential role in making text more readable by controlling the amount of space between consecutive lines of a paragraph.</p>
