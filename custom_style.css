@@ -1,0 +1,10 @@
+@page {
+  margin: 0 !important;
+}
+.body {
+  display: block;
+  margin: 0;
+}
+.footnote {
+  font-size: 80%;
+}

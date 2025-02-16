@@ -1,39 +1,41 @@
+import json
 import subprocess
 import os
 import sys
+import re
 
-# Filenames
 input_file = "input.html"
 cover_file = "cover_image.jpg"
-stylesheet_file = "custom_style.css"
-output_file = "output.epub"
+metadata_file = "metadata.json"
+css_file = "custom_style.css"
 
-# Ensure required files exist
-for file in [input_file, cover_file]:
-    if not os.path.exists(file):
-        print(f"Error: {file} is missing. Please place it in the same folder.")
-        sys.exit(1)
+def create_epub():
+    for f in [input_file, cover_file, metadata_file]:
+        if not os.path.exists(f):
+            print(f"Error: {f} is missing. Please place it in the same folder.")
+            sys.exit(1)
+    with open(metadata_file, "r") as mf:
+        metadata = json.load(mf)
+    title = metadata.get("title", "Untitled")
+    author = metadata.get("author", "Unknown")
+    css_content = metadata.get("css", "")
+    #with open(css_file, "w") as cf:
+    #    cf.write(css_content)
+    #safe_title = re.sub(r'[\\/*?:"<>|]',"", title).replace(" ", "_")
+    output_file = f"{title}.epub"
+    cmd = [
+        "ebook-convert", input_file, output_file,
+        "--cover", cover_file,
+        "--extra-css", css_file,
+        "--chapter", "//h1",
+        "--title", title,
+        "--authors", author
+    ]
+    result = subprocess.run(cmd)
+    if result.returncode == 0:
+        print(f"Conversion completed: {output_file}")
+    else:
+        print("Conversion failed.")
 
-# Create custom CSS for styling
-css_content = """
-body {
-    margin: 0 !important;
-}
-.footnote {
-    font-size: 80%;
-}
-"""
-
-with open(stylesheet_file, "w") as css_file:
-    css_file.write(css_content)
-
-# Convert HTML to EPUB with cover and custom styles
-subprocess.run([
-    "ebook-convert", input_file, output_file,
-    "--cover", cover_file,
-    "--extra-css", stylesheet_file,
-    "--chapter", "//h1"
-])
-
-print(f"Conversion completed: {output_file}")
-
+if __name__ == "__main__":
+    create_epub()
