@@ -9,9 +9,9 @@ output_html = 'input.html'
 def preprocessing(entry):
     entry['text'] = re.sub(r'TIlis', 'This', entry['text'])
     entry['text'] = re.sub(r'(?<=\w)-\n(?=\w)', '', entry['text']) #hyphens that are preceded and followed by word characters
-    entry['text'] = re.sub(r'\bi(\d{3})\b', r'1\1', entry['text'])
-    while '  ' in entry['text']:
-        entry['text'] = entry['text'].replace('  ', ' ')
+    entry['text'] = re.sub(r'\bi(\d{3})\b', r'1\1', entry['text']) #years starting in i
+    entry['text'] = re.sub(r'([a-z])\.([A-Z])', r'\1. \2', entry['text']) #no space after period
+    while '  ' in entry['text']: entry['text'] = entry['text'].replace('  ', ' ')
     return entry
 
 def main():
