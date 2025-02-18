@@ -1,12 +1,26 @@
 import json
 import html
+import re
+import bleach
+
+input_json = 'output.json'
+output_html = 'input.html'
+
+def preprocessing(entry):
+    entry['text'] = re.sub(r'TIlis', 'This', entry['text'])
+    entry['text'] = re.sub(r'(?<=\w)-\n(?=\w)', '', entry['text']) #hyphens that are preceded and followed by word characters
+    entry['text'] = re.sub(r'\bi(\d{3})\b', r'1\1', entry['text'])
+    while '  ' in entry['text']:
+        entry['text'] = entry['text'].replace('  ', ' ')
+    return entry
 
 def main():
-    print("Manually combine and nest headers before JSON parsing")
-    input_json = 'output.json'
-    output_html = 'input.html'
-    allowed_labels = {'h1', 'h2', 'h3', 'p', 'blockquote', 'footnote'}
+    print("Remember to manually combine and nest headers before JSON parsing")
+    allowed_labels = {'h1', 'h2', 'h3', 'p', 'blockquote', 'footer'}
     skipping_labels = {'0', 'exclude'}
+    bleach_allowed_tags = ['b', 'i', 'u', 'sup', 'sub', 'ul', 'ol', 'li', 'a']
+    bleach_allowed_tags.extend(list(allowed_labels))
+    allowed_attributes = {'*': ['class', 'id', 'href', 'title', 'target', 'alt', 'src', 'data-*']}
     title_input = input("Title: ")
     #Step 1: Read and parse the JSON lines file
     entries = []
@@ -25,6 +39,8 @@ def main():
                 print(f"Skipping line {line_number}. Missing 'label' or 'text'.")
                 continue
             label = entry['label']
+            #progressive_label_map = {'header': 'h1', 'body': 'p', 'footer': 'footer', 'quote': 'blockquote', 'exclude': 'exclude'}
+            #label = progressive_label_map[label]
             if label in skipping_labels:
                 print(f"Excluding label '{label}' at line {line_number}.")
                 continue
@@ -34,14 +50,18 @@ def main():
             entries.append(entry)
     #Step 3: Generate HTML elements from valid entries
     html_elements = []
+    print("Applying preprocessing")
     for entry in entries:
+        entry = preprocessing(entry)
         label = entry['label']
-        escaped_text = html.escape(entry['text'])
+        #escaped_text = html.escape(entry['text'])
+        escaped_text = entry['text']
+        if False: escaped_text = """<p>This is safe text.<sup>1</sup></p><br><p style="color: red;">This is another safe text with <a href="https://example.com">link</a>.</p><br><script>alert("XSS")</script><br><img src="cover.jpg" onerror="alert('Hacked!')"/><br><a href="javascript:alert('XSS')">Unsafe link</a>"""
+        escaped_text = bleach.clean(escaped_text, tags=bleach_allowed_tags, attributes=allowed_attributes)
         if label == 'footnote':
             element = f'    <p class="footnote">{escaped_text}</p>'
         else:
             element = f'    <{label}>{escaped_text}</{label}>'
-        
         html_elements.append(element)
     html_content = f"""<!DOCTYPE html>
 <html>
@@ -54,7 +74,8 @@ def main():
 </html>""".replace('{}', '\n'.join(html_elements))
     with open(output_html, 'w', encoding='utf-8') as f:
         f.write(html_content)
+    print(f"Created {output_html}")
 
 if __name__ == '__main__':
     main()
-    print("Done")
+
