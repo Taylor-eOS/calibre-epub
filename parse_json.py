@@ -2,15 +2,17 @@ import json
 import html
 import re
 import bleach
+from move_footers import reorder_footers
 
 input_json = 'output.json'
 output_html = 'input.html'
 
 def preprocessing(entry):
     entry['text'] = re.sub(r'TIlis', 'This', entry['text'])
-    entry['text'] = re.sub(r'(?<=\w)-\n(?=\w)', '', entry['text']) #hyphens that are preceded and followed by word characters
+    entry['text'] = re.sub(r'(?<=\w) \n(?=\w)', '', entry['text']) #in-sentence line shifts
+    entry['text'] = re.sub(r'(?<=\w)-\n(?=\w)', '', entry['text']) #end-of-line hyphens
     entry['text'] = re.sub(r'\bi(\d{3})\b', r'1\1', entry['text']) #years starting in i
-    entry['text'] = re.sub(r'([a-z])\.([A-Z])', r'\1. \2', entry['text']) #no space after period
+    entry['text'] = re.sub(r'([a-z])\.([A-Z])', r'\1. \2', entry['text']) #missing space after period
     while '  ' in entry['text']: entry['text'] = entry['text'].replace('  ', ' ')
     return entry
 
@@ -24,6 +26,7 @@ def main():
     title_input = input("Title: ")
     #Step 1: Read and parse the JSON lines file
     entries = []
+    reorder_footers(input_json, input_json)
     with open(input_json, 'r', encoding='utf-8') as f:
         for line_number, line in enumerate(f, 1):
             line = line.strip()
@@ -42,7 +45,7 @@ def main():
             #progressive_label_map = {'header': 'h1', 'body': 'p', 'footer': 'footer', 'quote': 'blockquote', 'exclude': 'exclude'}
             #label = progressive_label_map[label]
             if label in skipping_labels:
-                print(f"Excluding label '{label}' at line {line_number}.")
+                print(f"Skipping '{label}' block at line {line_number}.")
                 continue
             elif label not in allowed_labels:
                 print(f"Skipping line {line_number}. Invalid label '{label}'.")
@@ -58,7 +61,7 @@ def main():
         escaped_text = entry['text']
         if False: escaped_text = """<p>This is safe text.<sup>1</sup></p><br><p style="color: red;">This is another safe text with <a href="https://example.com">link</a>.</p><br><script>alert("XSS")</script><br><img src="cover.jpg" onerror="alert('Hacked!')"/><br><a href="javascript:alert('XSS')">Unsafe link</a>"""
         escaped_text = bleach.clean(escaped_text, tags=bleach_allowed_tags, attributes=allowed_attributes)
-        if label == 'footnote':
+        if label == 'footer':
             element = f'    <p class="footnote">{escaped_text}</p>'
         else:
             element = f'    <{label}>{escaped_text}</{label}>'
