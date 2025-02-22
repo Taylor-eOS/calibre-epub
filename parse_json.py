@@ -3,9 +3,11 @@ import html
 import re
 import bleach
 from move_footers import reorder_footers
+from merge_blocks import combine_consecutive_blocks
 
 input_json = 'output.json'
 output_html = 'input.html'
+metadata_file = "metadata.json"
 
 def preprocessing(entry):
     entry['text'] = re.sub(r'TIlis', 'This', entry['text'])
@@ -17,17 +19,20 @@ def preprocessing(entry):
     return entry
 
 def main():
-    print("Remember to manually combine and nest headers before JSON parsing")
+    with open(metadata_file, "r") as mf:
+        metadata = json.load(mf)
+    print("Remember to manually nest headers before JSON parsing.")
     allowed_labels = {'h1', 'h2', 'h3', 'p', 'blockquote', 'footer'}
     skipping_labels = {'0', 'exclude'}
     bleach_allowed_tags = ['b', 'i', 'u', 'sup', 'sub', 'ul', 'ol', 'li', 'a']
     bleach_allowed_tags.extend(list(allowed_labels))
     allowed_attributes = {'*': ['class', 'id', 'href', 'title', 'target', 'alt', 'src', 'data-*']}
-    title_input = input("Title: ")
-    #Step 1: Read and parse the JSON lines file
+    title_input = metadata.get("title", "Untitled")
     entries = []
-    reorder_footers(input_json, input_json)
-    with open(input_json, 'r', encoding='utf-8') as f:
+    processed_json = "output_processed.json"
+    reorder_footers(input_json, processed_json)
+    combine_consecutive_blocks(processed_json, processed_json)
+    with open(processed_json, 'r', encoding='utf-8') as f:
         for line_number, line in enumerate(f, 1):
             line = line.strip()
             if not line:
@@ -37,7 +42,6 @@ def main():
             except json.JSONDecodeError as e:
                 print(f"Skipping line {line_number}. Not valid JSON. ({e})")
                 continue
-            #Step 2: Validate required fields and allowed labels
             if 'label' not in entry or 'text' not in entry:
                 print(f"Skipping line {line_number}. Missing 'label' or 'text'.")
                 continue

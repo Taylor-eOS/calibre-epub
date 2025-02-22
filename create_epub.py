@@ -14,7 +14,6 @@ def create_epub():
         if not os.path.exists(f):
             print(f"Error: {f} is missing. Please place it in the same folder.")
             sys.exit(1)
-    
     with open(metadata_file, "r") as mf:
         metadata = json.load(mf)
 
@@ -37,8 +36,7 @@ def create_epub():
         "--level2-toc", "//h:h2",
         "--level3-toc", "//h:h3",
         "--toc-threshold", "1",
-        "--debug-pipeline", "1",
-    ]
+        "--debug-pipeline", "1",]
 
     result = subprocess.run(cmd)
     if result.returncode == 0:
