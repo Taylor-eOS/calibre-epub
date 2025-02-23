@@ -15,6 +15,8 @@ def combine_consecutive_blocks(input_json, output_json):
                 raise
     processed_entries = []
     for entry in entries:
+        if entry.get('label') == 'exclude':
+            continue
         if processed_entries and not entry.get('label') == "footer":
             last_entry = processed_entries[-1]
             #Check if the current entry has the same label as the last processed entry

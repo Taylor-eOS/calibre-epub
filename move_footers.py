@@ -25,9 +25,8 @@ def reorder_footers(input_json, output_json):
             current_chapter = {
                 'entries': [entry],
                 'footers': []}
-        else:
+        else: #Handle entries before the first h1. Might just require there to be one instead
             if current_chapter is None:
-                #Handle entries before the first h1
                 current_chapter = {
                     'entries': [],
                     'footers': []}
@@ -35,6 +34,7 @@ def reorder_footers(input_json, output_json):
                 current_chapter['footers'].append(entry)
             else:
                 current_chapter['entries'].append(entry)
+                #print(current_chapter['entries'])
     #Add the last chapter after processing all entries
     if current_chapter is not None:
         chapters.append(current_chapter)

@@ -10,8 +10,14 @@ output_html = 'input.html'
 metadata_file = "metadata.json"
 
 def preprocessing(entry):
-    entry['text'] = re.sub(r'TIlis', 'This', entry['text'])
-    entry['text'] = re.sub(r'(?<=\w) \n(?=\w)', '', entry['text']) #in-sentence line shifts
+    replacements = [
+        (r'TIlis', 'This'),
+        (r'teh', 'the'),]
+    for pattern, replacement in replacements:
+        entry['text'] = re.sub(pattern, replacement, entry['text'])
+    #entry['text'] = re.sub(r'(?<=\w) \n(?=\w)', ' ', entry['text']) #in-sentence line shifts
+    #entry['text'] = re.sub(r'(?<=\w)\n(?=\w)', '', entry['text']) #in-word line shifts
+    entry['text'] = re.sub(r'\n', '', entry['text'])
     entry['text'] = re.sub(r'(?<=\w)-\n(?=\w)', '', entry['text']) #end-of-line hyphens
     entry['text'] = re.sub(r'\bi(\d{3})\b', r'1\1', entry['text']) #years starting in i
     entry['text'] = re.sub(r'([a-z])\.([A-Z])', r'\1. \2', entry['text']) #missing space after period
@@ -21,7 +27,7 @@ def preprocessing(entry):
 def main():
     with open(metadata_file, "r") as mf:
         metadata = json.load(mf)
-    print("Remember to manually nest headers before JSON parsing.")
+    print("Remember to manually nest headers (h1, h2, h3) before JSON parsing.")
     allowed_labels = {'h1', 'h2', 'h3', 'p', 'blockquote', 'footer'}
     skipping_labels = {'0', 'exclude'}
     bleach_allowed_tags = ['b', 'i', 'u', 'sup', 'sub', 'ul', 'ol', 'li', 'a']
@@ -29,7 +35,7 @@ def main():
     allowed_attributes = {'*': ['class', 'id', 'href', 'title', 'target', 'alt', 'src', 'data-*']}
     title_input = metadata.get("title", "Untitled")
     entries = []
-    processed_json = "output_processed.json"
+    processed_json = "intermediary.json"
     reorder_footers(input_json, processed_json)
     combine_consecutive_blocks(processed_json, processed_json)
     with open(processed_json, 'r', encoding='utf-8') as f:
@@ -63,7 +69,6 @@ def main():
         label = entry['label']
         #escaped_text = html.escape(entry['text'])
         escaped_text = entry['text']
-        if False: escaped_text = """<p>This is safe text.<sup>1</sup></p><br><p style="color: red;">This is another safe text with <a href="https://example.com">link</a>.</p><br><script>alert("XSS")</script><br><img src="cover.jpg" onerror="alert('Hacked!')"/><br><a href="javascript:alert('XSS')">Unsafe link</a>"""
         escaped_text = bleach.clean(escaped_text, tags=bleach_allowed_tags, attributes=allowed_attributes)
         if label == 'footer':
             element = f'    <p class="footnote">{escaped_text}</p>'
