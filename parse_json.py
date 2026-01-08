@@ -10,8 +10,7 @@ input_json = 'output.json'
 intermediate_json = 'intermediary.json'
 output_html = 'input.html'
 metadata_file = "metadata.json"
-merge_consecutive = True
-skip_merging_for_large_files = True
+merge_consecutive = False
 
 def preprocessing(entry):
     replacements = [(r'TIlis', 'This'),(r'teh', 'the')]
@@ -95,6 +94,7 @@ def main():
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>{metadata.get("title","Untitled")}</title>
+    <meta charset="utf-8">
 </head>
 <body>
 {''.join(html)}
