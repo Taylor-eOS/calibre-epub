@@ -1,13 +1,11 @@
+import os, sys, re
 import json
-import re
 import bleach
-import os
-import sys
 from move_footers import reorder_footers
 from merge_blocks import combine_consecutive_blocks
 
-input_json = 'output.json'
-intermediate_json = 'intermediary.json'
+input_json = 'input.json'
+intermediate_json = 'intermediate.json'
 output_html = 'input.html'
 metadata_file = "metadata.json"
 merge_consecutive = False

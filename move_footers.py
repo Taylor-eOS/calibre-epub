@@ -2,7 +2,6 @@ import json
 
 def reorder_footers(input_json, output_json):
     entries = []
-    #Read entries from the input file
     with open(input_json, 'r', encoding='utf-8') as f:
         for line_number, line in enumerate(f, 1):
             line = line.strip()
@@ -14,7 +13,6 @@ def reorder_footers(input_json, output_json):
             except json.JSONDecodeError as e:
                 print(f"Error decoding JSON on line {line_number}: {e}")
                 raise
-    #Process entries to reorganize footers
     chapters = []
     current_chapter = None
     for entry in entries:
@@ -25,7 +23,7 @@ def reorder_footers(input_json, output_json):
             current_chapter = {
                 'entries': [entry],
                 'footers': []}
-        else: #Handle entries before the first h1. Might just require there to be one instead
+        else:
             if current_chapter is None:
                 current_chapter = {
                     'entries': [],
@@ -34,16 +32,12 @@ def reorder_footers(input_json, output_json):
                 current_chapter['footers'].append(entry)
             else:
                 current_chapter['entries'].append(entry)
-                #print(current_chapter['entries'])
-    #Add the last chapter after processing all entries
     if current_chapter is not None:
         chapters.append(current_chapter)
-    #Flatten the chapters into the result list
     result = []
     for chapter in chapters:
         result.extend(chapter['entries'])
         result.extend(chapter['footers'])
-    #Write the reordered entries to the output file
     with open(output_json, 'w', encoding='utf-8') as f:
         for entry in result:
             json_line = json.dumps(entry, ensure_ascii=False)
