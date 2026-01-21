@@ -11,7 +11,7 @@ metadata_file = "metadata.json"
 merge_consecutive = False
 
 def preprocessing(entry):
-    replacements = [(r'TIlis', 'This'),(r'teh', 'the')]
+    replacements = [(r'TIlis ', 'This '),(r' teh ', ' the '),(r' taht ', ' that '),(r' jsut ', ' just ')] #careful not to remove unwanted parts of words
     for patt, repl in replacements:
         entry['text'] = re.sub(patt, repl, entry['text'])
     entry['text'] = re.sub(r'\n', '', entry['text'])
@@ -30,7 +30,7 @@ def main():
         metadata = json.load(mf)
     allowed_labels = {'h1','h2','h3','p','blockquote','footer'}
     skipping = {'0','exclude'}
-    bleach_tags = ['b','i','u','sup','sub','ul','ol','li','a'] + list(allowed_labels)
+    bleach_tags = ['b','i','u','sup','sub','ul','ol','li','a','br'] + list(allowed_labels) #if this removes too much, implement a temporary marker that gets replaced with <br> later
     bleach_attrs = {'*': ['class','id','href','title','target','alt','src','data-*']}
     reorder_footers(input_json, intermediate_json)
     source_for_parsing = intermediate_json
