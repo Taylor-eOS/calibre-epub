@@ -1,8 +1,9 @@
 # Checklist
-Basic character corrections, ligatures<br>
-Fix `\\n`<br>
+Basic character correction, replace ligatures<br>
+Remove `\\n`s<br>
 Combine `blockquote`s<br>
 Fix page (exclude) block splits<br>
-Fix headers<br>
 Fix footnote references<br>
-Correct whitespace<br>
+Run whitespace-correction<br>
+Fix headers<br>
+Enter metadata
