@@ -30,7 +30,7 @@ def main():
         metadata = json.load(mf)
     allowed_labels = {'h1','h2','h3','p','blockquote','footer'}
     skipping = {'0','exclude'}
-    bleach_tags = ['b','i','u','sup','sub','ul','ol','li','a','br'] + list(allowed_labels) #if this removes too much, implement a temporary marker that gets replaced with <br> later
+    bleach_tags = ['b','i','u','sup','sub','ul','ol','li','a','br'] + list(allowed_labels)
     bleach_attrs = {'*': ['class','id','href','title','target','alt','src','data-*']}
     reorder_footers(input_json, intermediate_json)
     source_for_parsing = intermediate_json
@@ -60,6 +60,13 @@ def main():
     section_open = False
     section_count = 0
     content_since_header = False
+    html.append('<!DOCTYPE html>')
+    html.append('<html xmlns="http://www.w3.org/1999/xhtml">')
+    html.append('<head>')
+    html.append('    <title>' + metadata.get("title", "Untitled") + '</title>')
+    html.append('    <meta charset="utf-8">')
+    html.append('</head>')
+    html.append('<body>')
     for entry in entries:
         entry = preprocessing(entry)
         lbl = entry['label']
@@ -70,34 +77,27 @@ def main():
                 if section_open:
                     html.append('</section>')
                 section_count += 1
-                html.append(f'<section id="section-{section_count}">')
+                html.append('<section id="section-' + str(section_count) + '">')
                 section_open = True
                 content_since_header = False
             else:
                 if section_open and content_since_header and lvl > 1:
                     html.append('</section>')
                     section_count += 1
-                    html.append(f'<section id="section-{section_count}">')
+                    html.append('<section id="section-' + str(section_count) + '">')
                     content_since_header = False
-            html.append(f'<{lbl}>{txt}</{lbl}>')
+            html.append('<' + lbl + '>' + txt + '</' + lbl + '>')
         else:
             if lbl == 'footer':
-                html.append(f'<p class="footnote">{txt}</p>')
+                html.append('<p class="footnote">' + txt + '</p>')
             else:
-                html.append(f'<{lbl}>{txt}</{lbl}>')
+                html.append('<' + lbl + '>' + txt + '</' + lbl + '>')
             content_since_header = True
     if section_open:
         html.append('</section>')
-    out = f"""<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <title>{metadata.get("title","Untitled")}</title>
-    <meta charset="utf-8">
-</head>
-<body>
-{''.join(html)}
-</body>
-</html>"""
+    html.append('</body>')
+    html.append('</html>')
+    out = '\n'.join(html)
     with open(output_html, 'w', encoding='utf-8') as f:
         f.write(out)
     if merge_consecutive and source_for_parsing != intermediate_json:
