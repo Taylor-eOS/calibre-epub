@@ -1,4 +1,6 @@
-import os, sys, re
+import os
+import sys
+import re
 import json
 import bleach
 from move_footers import reorder_footers
@@ -28,6 +30,8 @@ def main():
         sys.exit(1)
     with open(metadata_file, encoding='utf-8') as mf:
         metadata = json.load(mf)
+    title_text = metadata.get("title", "Untitled")
+    safe_title = bleach.clean(title_text, tags=[], strip=True)
     allowed_labels = {'h1','h2','h3','p','blockquote','footer'}
     skipping = {'0','exclude'}
     bleach_tags = ['b','i','u','sup','sub','ul','ol','li','a','br'] + list(allowed_labels)
@@ -63,10 +67,11 @@ def main():
     html.append('<!DOCTYPE html>')
     html.append('<html xmlns="http://www.w3.org/1999/xhtml">')
     html.append('<head>')
-    html.append('    <title>' + metadata.get("title", "Untitled") + '</title>')
+    html.append('    <title>' + safe_title + '</title>')
     html.append('    <meta charset="utf-8">')
     html.append('</head>')
     html.append('<body>')
+    html.append('<p style="font-size: 3em; text-align: center; margin-top: 40%; font-weight: bold;">' + safe_title + '</p>')
     for entry in entries:
         entry = preprocessing(entry)
         lbl = entry['label']
