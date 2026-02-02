@@ -51,9 +51,9 @@ def get_entries_to_process(source_file):
             entries.append(e)
     return entries
 
-def build_html_content(entries, title_text):
+def build_html_content(entries, title_text, author_text):
     levels = {'h1':1, 'h2':2, 'h3':3}
-    bleach_tags = ['b','i','u','sup','sub','ul','ol','li','a','br','h1','h2','h3','p','blockquote','footer']
+    bleach_tags = ['b','i','u','sup','sub','ul','ol','li','a','br','h1','h2','h3','p','blockquote','footer','center']
     bleach_attrs = {'*': ['class','id','href','title','target','alt','src','data-*']}
     html = []
     section_open = False
@@ -66,7 +66,8 @@ def build_html_content(entries, title_text):
     html.append('    <meta charset="utf-8">')
     html.append('</head>')
     html.append('<body>')
-    html.append('<p style="font-size: 3em; text-align: center; margin-top: 40%; font-weight: bold;">' + title_text + '</p>')
+    html.append('<p style="font-size: 1.5em; text-align: center; margin-top: 10%;">' + author_text + '</p>')
+    html.append('<p style="font-size: 2.8em; text-align: center; margin-top: 25%; margin-bottom: 35%; font-weight: bold;">' + title_text + '</p>')
     for entry in entries:
         entry = preprocessing(entry)
         lbl = entry['label']
@@ -107,6 +108,7 @@ def write_output(html_lines):
 def create_html():
     metadata = load_metadata()
     title_text = metadata.get("title", "Untitled")
+    author_text = metadata.get("author", "Unknown")
     reorder_footers(input_json, intermediate_json)
     source_for_parsing = intermediate_json
     if merge_consecutive:
@@ -116,7 +118,7 @@ def create_html():
     else:
         print("Merging of consecutive blocks disabled (merge_consecutive = False)")
     entries = get_entries_to_process(source_for_parsing)
-    html_lines = build_html_content(entries, title_text)
+    html_lines = build_html_content(entries, title_text, author_text)
     write_output(html_lines)
     if merge_consecutive and source_for_parsing != intermediate_json:
         try:
