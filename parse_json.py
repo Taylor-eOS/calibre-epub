@@ -53,7 +53,7 @@ def get_entries_to_process(source_file):
 
 def build_html_content(entries, title_text, author_text):
     levels = {'h1':1, 'h2':2, 'h3':3}
-    bleach_tags = ['b','i','u','sup','sub','ul','ol','li','a','br','h1','h2','h3','p','blockquote','footer','center']
+    bleach_tags = ['b','i','u','sup','sub','ul','ol','li','a','br','h1','h2','h3','p','blockquote','footer','center','strong']
     bleach_attrs = {'*': ['class','id','href','title','target','alt','src','data-*']}
     html = []
     section_open = False
@@ -67,7 +67,7 @@ def build_html_content(entries, title_text, author_text):
     html.append('</head>')
     html.append('<body>')
     html.append('<p style="font-size: 1.5em; text-align: center; margin-top: 10%;">' + author_text + '</p>')
-    html.append('<p style="font-size: 2.8em; text-align: center; margin-top: 25%; margin-bottom: 35%; font-weight: bold;">' + title_text + '</p>')
+    html.append('<p style="font-size: 2.8em; text-align: center; margin-top: 20%; margin-bottom: 35%; font-weight: bold;">' + title_text + '</p>')
     for entry in entries:
         entry = preprocessing(entry)
         lbl = entry['label']

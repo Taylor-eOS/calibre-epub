@@ -30,10 +30,14 @@ def create_epub():
         "--chapter", "//h:h1",
         "--level1-toc", "//h:h1",
         "--level2-toc", "//h:h2",
-        "--level3-toc", "//h:h3",
-        "--toc-threshold", "1",
+        #"--level3-toc", "//h:h3",
+        #"--toc-threshold", "1",
         "--epub-inline-toc",
-        "--debug-pipeline", "1",
+        "--debug-pipeline", "debug",
+        "--margin-top", "0",
+        "--margin-bottom", "0",
+        "--margin-left", "0",
+        "--margin-right", "0",
     ]
     result = subprocess.run(cmd)
     if result.returncode == 0:
