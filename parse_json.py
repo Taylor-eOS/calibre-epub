@@ -11,6 +11,7 @@ intermediate_json = 'intermediate.json'
 output_html = 'input.html'
 metadata_file = "metadata.json"
 merge_consecutive = False
+use_bleach = False
 
 def preprocessing(entry):
     replacements = [(r'TIlis ', 'This '),(r' teh ', ' the '),(r' taht ', ' that '),(r' jsut ', ' just ')]
@@ -67,11 +68,14 @@ def build_html_content(entries, title_text, author_text):
     html.append('</head>')
     html.append('<body>')
     html.append('<p style="font-size: 1.5em; text-align: center; margin-top: 10%;">' + author_text + '</p>')
-    html.append('<p style="font-size: 2.8em; text-align: center; margin-top: 20%; margin-bottom: 35%; font-weight: bold;">' + title_text + '</p>')
+    html.append('<p style="font-size: 2.7em; text-align: center; margin-top: 18%; margin-bottom: 34%; font-weight: bold;">' + title_text + '</p>')
     for entry in entries:
         entry = preprocessing(entry)
         lbl = entry['label']
-        txt = bleach.clean(entry['text'], tags=bleach_tags, attributes=bleach_attrs, strip=True)
+        if use_bleach:
+            txt = bleach.clean(entry['text'], tags=bleach_tags, attributes=bleach_attrs, strip=True)
+        else:
+            txt = entry['text']
         if lbl in levels:
             lvl = levels[lbl]
             if lvl == 1:
