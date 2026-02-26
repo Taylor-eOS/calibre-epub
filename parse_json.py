@@ -51,7 +51,8 @@ def build_html_content(entries, title_text, author_text):
     html.append('</head>')
     html.append('<body>')
     html.append('<p style="font-size: 1.5em; text-align: center; margin-top: 10%;">' + author_text + '</p>')
-    html.append('<p style="font-size: 2.7em; text-align: center; margin-top: 18%; margin-bottom: 34%; font-weight: bold;">' + title_text + '</p>')
+    html.append('<p style="font-size: 2.7em; text-align: center; margin-top: 18%; font-weight: bold;">' + title_text + '</p>')
+    html.append('<div style="page-break-before: always;"></div>')
     for entry in entries:
         txt = entry['text']
         lbl = entry['label']
