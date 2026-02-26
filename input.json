@@ -1,0 +1,18 @@
+{"label": "h1", "text": "Introduction"}
+{"label": "p", "text": "This is an example text."}
+{"label": "exclude", "text": "this should be excluded"}
+{"label": "p", "text": "<table><tr><th>Name</th><th>Age</th></tr><tr><td>John</td><td>30</td></tr><tr><td>unknown</td><td>25</td></tr></table>"}
+{"label": "p", "text": "This is an example text."}
+{"label": "p", "text": "<img src=\"cover.jpg\" alt=\"\"/>"}
+{"label": "p", "text": "This is an example text."}
+{"label": "h1", "text": "Chapter h1"}
+{"label": "h2", "text": "Chapter h2"}
+{"label": "p", "text": "This is an example text."}
+{"label": "h3", "text": "Chapter h3"}
+{"label": "p", "text": "This is an example text."}
+{"label": "h4", "text": "Chapter h4"}
+{"label": "p", "text": "This is an example text."}
+{"label": "h5", "text": "Chapter h5"}
+{"label": "p", "text": "This is an example text."}
+{"label": "h6", "text": "Chapter h6"}
+{"label": "p", "text": "This is an example text."}

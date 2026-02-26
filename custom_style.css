@@ -5,6 +5,10 @@
   margin-top: 0em;
   margin-bottom: 0em;
 }
+blockquote {
+  font-style: italic;
+  margin: 0.5em 1em 0.5em 1em;
+}
 .footnote {
   font-size: 80%;
 }
@@ -15,12 +19,41 @@ h1 {
   margin: 0.9em 0 0.7em 0;
 }
 h2 {
-  font-size: 1.4em;
+  font-size: 1.3em;
   font-weight: bold;
-  margin: 0.8em 0 0.4em 0;
+  margin: 0.8em 0 0.2em 0;
 }
 h3 {
-  font-size: 1.2em;
+  font-size: 1.1em;
   font-weight: bold;
-  margin: 0.5em 0 0.2em 0;
+  margin: 0.5em 0 0 0;
+}
+h4 {
+  font-size: 1em;
+  font-weight: bold;
+  margin: 0.1em 0 0 0;
+}
+h5, h6 {
+  font-size: 1em;
+  font-weight: normal;
+  margin: 0 0 0 0;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 85%;
+  margin: 0.5em 0;
+}
+td, th {
+  border: 1px solid #555;
+  padding: 0.2em 0.4em;
+}
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0.5em auto;
+}
+p {
+  text-indent: 1em;
 }

@@ -1,8 +1,7 @@
 import os
-import sys
 import re
+import sys
 import json
-import bleach
 from move_footers import reorder_footers
 from merge_blocks import combine_consecutive_blocks
 
@@ -11,19 +10,6 @@ intermediate_json = 'intermediate.json'
 output_html = 'input.html'
 metadata_file = "metadata.json"
 merge_consecutive = False
-use_bleach = False
-
-def preprocessing(entry):
-    replacements = [(r'TIlis ', 'This '),(r' teh ', ' the '),(r' taht ', ' that '),(r' jsut ', ' just ')]
-    for patt, repl in replacements:
-        entry['text'] = re.sub(patt, repl, entry['text'])
-    entry['text'] = re.sub(r'\n', '', entry['text'])
-    entry['text'] = re.sub(r'(?<=\w)-\n(?=\w)', '', entry['text'])
-    entry['text'] = re.sub(r'\bi(\d{3})\b', r'1\1', entry['text'])
-    entry['text'] = re.sub(r'([a-z])\.([A-Z])', r'\1. \2', entry['text'])
-    while '  ' in entry['text']:
-        entry['text'] = entry['text'].replace('  ', ' ')
-    return entry
 
 def load_metadata():
     if not os.path.exists(metadata_file):
@@ -33,8 +19,7 @@ def load_metadata():
         return json.load(mf)
 
 def get_entries_to_process(source_file):
-    allowed_labels = {'h1','h2','h3','p','blockquote','footer'}
-    skipping = {'0','exclude'}
+    allowed_labels = {'h1','h2','h3','h4','h5','h6','p','blockquote','footer'}
     entries = []
     with open(source_file, encoding='utf-8') as f:
         for raw_line in f:
@@ -47,15 +32,13 @@ def get_entries_to_process(source_file):
                 continue
             if 'label' not in e or 'text' not in e:
                 continue
-            if e['label'] in skipping or e['label'] not in allowed_labels:
+            if e['label'] not in allowed_labels:
                 continue
             entries.append(e)
     return entries
 
 def build_html_content(entries, title_text, author_text):
     levels = {'h1':1, 'h2':2, 'h3':3}
-    bleach_tags = ['b','i','u','sup','sub','ul','ol','li','a','br','h1','h2','h3','p','blockquote','footer','center','strong']
-    bleach_attrs = {'*': ['class','id','href','title','target','alt','src','data-*']}
     html = []
     section_open = False
     section_count = 0
@@ -70,12 +53,8 @@ def build_html_content(entries, title_text, author_text):
     html.append('<p style="font-size: 1.5em; text-align: center; margin-top: 10%;">' + author_text + '</p>')
     html.append('<p style="font-size: 2.7em; text-align: center; margin-top: 18%; margin-bottom: 34%; font-weight: bold;">' + title_text + '</p>')
     for entry in entries:
-        entry = preprocessing(entry)
+        txt = entry['text']
         lbl = entry['label']
-        if use_bleach:
-            txt = bleach.clean(entry['text'], tags=bleach_tags, attributes=bleach_attrs, strip=True)
-        else:
-            txt = entry['text']
         if lbl in levels:
             lvl = levels[lbl]
             if lvl == 1:
